@@ -6,7 +6,7 @@ const copyFile = fsPromises.copyFile;
 
 (function copyDir() {
   process.stdout.write(`\n`)
-  fs.rm(path.join(__dirname, 'files-copy'), { force:true, recursive:true, }, (err) => {
+  fs.rm(path.join(__dirname, './files-copy'), { force:true, recursive:true, }, (err) => {
     if (err) {
       throw err;
     }

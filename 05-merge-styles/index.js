@@ -17,5 +17,5 @@ fsPromises.readdir(stylesDir, { withFileTypes: true }).then(files => {
       });
     }
   });
-  process.stdout.write(`\n bundle.css compiled successfully!\n`)
+  process.stdout.write(`\nbundle.css compiled successfully!\n`)
 });
