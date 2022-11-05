@@ -11,19 +11,22 @@ const copyFile = fsPromises.copyFile;
       console.error(err.message);
     }
 
-    createDir()
-    .then((resolve) => {
-      createDir('./assets')
-      .then((resolve) => {
-        copyAssets()
-        .then((resolve) => {
-          mergeStyles()
-          .then((resolve) => {
-            buildHTML()
-          });
-        });
-      });
+    // createDir()
+    // createDir('./assets')
+    // copyAssets()
+    // mergeStyles()
+    // buildHTML()
+
+    createDir().then(() => {
+      return createDir('./assets');
+    }).then(() => {
+      return copyAssets()
+    }).then(() => {
+      return mergeStyles()
+    }).then(() => {
+      return buildHTML()
     });
+
   });
 })();
 
@@ -83,30 +86,53 @@ async function mergeStyles() {
   });
 }
 
+// async function buildHTML() {
+//   const folder = path.join(__dirname, './project-dist');
+//   const templateHTML = path.join(__dirname, './template.html');
+//   const componentsDir = path.join(__dirname, './components');
+
+//   fsPromises.readFile(templateHTML, 'utf8').then(contentHTML => {
+//     fsPromises.readdir(componentsDir, { withFileTypes: true }).then(files => {
+//       files.forEach(file => {
+//         const filePath = path.join(componentsDir, file.name);
+//         const fileName = path.basename(filePath);
+//         const fileExt = path.extname(filePath);
+//         const componentName = path.parse(filePath).name;
+
+//         if (file.isFile() && fileExt == '.html') {
+//           fsPromises.readFile(path.join(componentsDir, fileName), 'utf-8').then(content => {
+//             return contentHTML = contentHTML.replace(`{{${componentName}}}`, content);
+//           }).then(() => {
+//             fsPromises.writeFile(path.join(folder, './index.html'), contentHTML, (err) => {
+//               if (err) { throw err; }
+//             });
+//           });
+//         }
+//       });
+//     });
+//     console.log(`Bundle index.html compiled successfully`);
+//     console.log(`HTML-build compiled successfully`)
+//   });
+// }
+
 async function buildHTML() {
   const folder = path.join(__dirname, './project-dist');
   const templateHTML = path.join(__dirname, './template.html');
   const componentsDir = path.join(__dirname, './components');
-
   let contentHTML = await fsPromises.readFile(templateHTML, 'utf8');
+  const componentsFiles = await fsPromises.readdir(componentsDir);
 
-  fsPromises.readdir(componentsDir, { withFileTypes: true }).then(files => {
-    files.forEach(file => {
-      const filePath = path.join(componentsDir, file.name);
-      const fileName = path.basename(filePath);
-      const fileExt = path.extname(filePath);
+  for (let file of componentsFiles) {
+    if (file.endsWith('.html')) {
+      const filePath = path.join(componentsDir, file);
       const componentName = path.parse(filePath).name;
 
-      if (file.isFile() && fileExt == '.html') {
-        const writeStream = fs.createWriteStream(path.join(folder, './index.html'), 'utf-8');
-        const readStream = fs.createReadStream(path.join(componentsDir, fileName), 'utf-8');
-        readStream.on('data', data => {
-          contentHTML = contentHTML.replace(`{{${componentName}}}`, data);
-          writeStream.write(contentHTML);
-        });
-      }
-    });
-    console.log(`Bundle index.html compiled successfully`);
-    console.log(`HTML-build compiled successfully`)
+      let content = await fsPromises.readFile(filePath);
+      contentHTML = contentHTML.replace(`{{${componentName}}}`, content);
+    };
+  }
+
+  fs.writeFile(path.join(folder, './index.html'), contentHTML, (err) => {
+    if (err) { throw err; }
   });
 }
