@@ -11,12 +11,6 @@ const copyFile = fsPromises.copyFile;
       console.error(err.message);
     }
 
-    // createDir()
-    // createDir('./assets')
-    // copyAssets()
-    // mergeStyles()
-    // buildHTML()
-
     createDir().then(() => {
       return createDir('./assets');
     }).then(() => {
@@ -86,35 +80,6 @@ async function mergeStyles() {
   });
 }
 
-// async function buildHTML() {
-//   const folder = path.join(__dirname, './project-dist');
-//   const templateHTML = path.join(__dirname, './template.html');
-//   const componentsDir = path.join(__dirname, './components');
-
-//   fsPromises.readFile(templateHTML, 'utf8').then(contentHTML => {
-//     fsPromises.readdir(componentsDir, { withFileTypes: true }).then(files => {
-//       files.forEach(file => {
-//         const filePath = path.join(componentsDir, file.name);
-//         const fileName = path.basename(filePath);
-//         const fileExt = path.extname(filePath);
-//         const componentName = path.parse(filePath).name;
-
-//         if (file.isFile() && fileExt == '.html') {
-//           fsPromises.readFile(path.join(componentsDir, fileName), 'utf-8').then(content => {
-//             return contentHTML = contentHTML.replace(`{{${componentName}}}`, content);
-//           }).then(() => {
-//             fsPromises.writeFile(path.join(folder, './index.html'), contentHTML, (err) => {
-//               if (err) { throw err; }
-//             });
-//           });
-//         }
-//       });
-//     });
-//     console.log(`Bundle index.html compiled successfully`);
-//     console.log(`HTML-build compiled successfully`)
-//   });
-// }
-
 async function buildHTML() {
   const folder = path.join(__dirname, './project-dist');
   const templateHTML = path.join(__dirname, './template.html');
@@ -135,4 +100,6 @@ async function buildHTML() {
   fs.writeFile(path.join(folder, './index.html'), contentHTML, (err) => {
     if (err) { throw err; }
   });
+  console.log(`Bundle index.html compiled successfully`);
+  console.log(`HTML-build compiled successfully`);
 }
